@@ -91,14 +91,7 @@ void cSolution::solve()
                 continue;
             for (auto &s : vStation)
             {
-                std::cout << "station distance "
-                    << s.first <<" "<< s.second <<"\n"
-                    << b1.first <<" "<< b1.second <<", "
-                    << b2.first <<" "<< b2.second << " d= "
-                                    << geo::distance(
-                        geo::line_t({b1, b2}),
-                        s) << "\n";
-
+                // check distance from station to link between b1 and b2
                 if (
                     geo::distance(
                         geo::line_t({b1, b2}),
