@@ -23,6 +23,10 @@ public:
     void generateRandom();
     void solve();
     void draw(wex::shapes &S);
+
+    void add( const geo::line_t& link);
+    void add( const geo::point_t& building );
+    bool isEnough();
 };
 
 class cGUI : public cStarterGUI
@@ -98,21 +102,31 @@ void cSolution::solve()
                         s) < myMinDistance)
                 {
                     
-                    sBuildingSolve.insert(b1);
-                    sBuildingSolve.insert(b2);
-                    sLinkSolve.insert(geo::line_t({b1, b2}));
-                    std::cout << "inserted " << sBuildingSolve.size()
-                    <<" "<< sLinkSolve.size() << "\n";
+                    add(b1);
+                    add(b2);
+                    add(geo::line_t({b1, b2}));
                     break;
                 }
             }
-            if (sBuildingSolve.size() >= myBuildingCountRequired)
+            if ( isEnough() )
                 break;
         }
-        if (sBuildingSolve.size() >= myBuildingCountRequired)
+        if (isEnough() )
             break;
     }
 }
+bool cSolution::isEnough()
+{
+    return sBuildingSolve.size() >= myBuildingCountRequired;
+}
+void cSolution::add( const geo::line_t& link)
+{
+    sLinkSolve.insert( link );
+}
+ void cSolution::add( const geo::point_t& building )
+ {
+     sBuildingSolve.insert( building );
+ }
 void cSolution::draw(wex::shapes &S)
 {
     S.fill();

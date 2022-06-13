@@ -5,13 +5,17 @@
 namespace geo
 {
 
-    bool cPolygon::isInside(point_t p) const
+    bool isInside(
+        point_t &p,
+        polygon_t &poly)
     {
-        typedef std::vector<std::pair<int, int>>::const_iterator it_t;
+        typedef polygon_t::const_iterator it_t;
         int c = 0;
-        it_t j = myVertex.end() - 1;
-        for (it_t i = myVertex.begin();
-             i != myVertex.end(); j = i++)
+        it_t j = poly.end() - 1;
+        for (
+            it_t i = poly.begin();
+            i != poly.end();
+            j = i++)
         {
             if (((i->second > p.second) != (j->second > p.second)) &&
                 (p.first < (j->first - i->first) * (p.second - i->second) /
@@ -22,96 +26,96 @@ namespace geo
         return (c == 1);
     }
 
-    void cPolygon::clip(line_t &l)
-    {
-        // std::cout << "=>clip "
-        //           << l.first.first << " " << l.first.second << " "
-        //           << l.second.first << " " << l.second.second << "\n";
+    // void cPolygon::clip(line_t &l)
+    // {
+    //     // std::cout << "=>clip "
+    //     //           << l.first.first << " " << l.first.second << " "
+    //     //           << l.second.first << " " << l.second.second << "\n";
 
-        bool fi1 = isInside(l.first);
-        bool fi2 = isInside(l.second);
-        if (fi1 && fi2)
-        {
-            // both ends inside, no clip needed
-            return;
-        }
+    //     bool fi1 = isInside(l.first);
+    //     bool fi2 = isInside(l.second);
+    //     if (fi1 && fi2)
+    //     {
+    //         // both ends inside, no clip needed
+    //         return;
+    //     }
 
-        auto vint = all_line_intersections(l);
+    //     auto vint = all_line_intersections(l);
 
-        if (!vint.size())
-        {
-            // entirely outside
-            l.first.first = -1;
-            l.first.second = -1;
-            l.second.first = -1;
-            l.second.second = -1;
-            return;
-        }
+    //     if (!vint.size())
+    //     {
+    //         // entirely outside
+    //         l.first.first = -1;
+    //         l.first.second = -1;
+    //         l.second.first = -1;
+    //         l.second.second = -1;
+    //         return;
+    //     }
 
-        if ((!fi1) && (!fi2))
-        {
-            // both ends outside
-            // std::cout << "both "
-            //     << vint[0].first <<" " << vint[0].second
-            //     <<" "<< vint[1].first <<" " << vint[1].second << "\n";
-            if (l.first.second == l.second.second)
-            {
-                // horizontal
-                if (vint[0].first < vint[1].first)
-                {
-                    l.first.first = vint[0].first;
-                    l.second.first = vint[1].first;
-                }
-                else
-                {
-                    l.first.first = vint[1].first;
-                    l.second.first = vint[0].first;
-                }
-            }
-            else
-            {
-                // vertical
-                if (vint[0].second < vint[1].second)
-                {
-                    l.first.second = vint[0].second;
-                    l.second.second = vint[1].second;
-                }
-                else
-                {
-                    l.first.second = vint[1].second;
-                    l.second.second = vint[0].second;
-                }
-            }
-        }
-        else
-        {
-            // partially outside
+    //     if ((!fi1) && (!fi2))
+    //     {
+    //         // both ends outside
+    //         // std::cout << "both "
+    //         //     << vint[0].first <<" " << vint[0].second
+    //         //     <<" "<< vint[1].first <<" " << vint[1].second << "\n";
+    //         if (l.first.second == l.second.second)
+    //         {
+    //             // horizontal
+    //             if (vint[0].first < vint[1].first)
+    //             {
+    //                 l.first.first = vint[0].first;
+    //                 l.second.first = vint[1].first;
+    //             }
+    //             else
+    //             {
+    //                 l.first.first = vint[1].first;
+    //                 l.second.first = vint[0].first;
+    //             }
+    //         }
+    //         else
+    //         {
+    //             // vertical
+    //             if (vint[0].second < vint[1].second)
+    //             {
+    //                 l.first.second = vint[0].second;
+    //                 l.second.second = vint[1].second;
+    //             }
+    //             else
+    //             {
+    //                 l.first.second = vint[1].second;
+    //                 l.second.second = vint[0].second;
+    //             }
+    //         }
+    //     }
+    //     else
+    //     {
+    //         // partially outside
 
-            // std::cout << "partial "
-            //     << vint.size() <<" "<< vint[0].first
-            //     <<" " << vint[0].second << "\n";
+    //         // std::cout << "partial "
+    //         //     << vint.size() <<" "<< vint[0].first
+    //         //     <<" " << vint[0].second << "\n";
 
-            if (l.first.second == l.second.second)
-            {
-                // horizontal
-                if (!fi1)
-                    l.first.first = vint[0].first;
-                else
-                    l.second.first = vint[0].first;
-            }
-            else
-            {
-                if (!fi1)
-                    l.first.second = vint[0].second;
-                else
-                    l.second.second = vint[0].second;
-            }
-        }
+    //         if (l.first.second == l.second.second)
+    //         {
+    //             // horizontal
+    //             if (!fi1)
+    //                 l.first.first = vint[0].first;
+    //             else
+    //                 l.second.first = vint[0].first;
+    //         }
+    //         else
+    //         {
+    //             if (!fi1)
+    //                 l.first.second = vint[0].second;
+    //             else
+    //                 l.second.second = vint[0].second;
+    //         }
+    //     }
 
-        // std::cout << "<=clip "
-        //           << l.first.first << " " << l.first.second << " "
-        //           << l.second.first << " " << l.second.second << "\n\n";
-    }
+    //     // std::cout << "<=clip "
+    //     //           << l.first.first << " " << l.first.second << " "
+    //     //           << l.second.first << " " << l.second.second << "\n\n";
+    // }
 
     int length2(
         const line_t &l)
@@ -181,13 +185,12 @@ namespace geo
         if (t > 1)
             t = 1;
         point_t proj({p.first + t * (l.second.first - l.first.first),
-                           p.second + t * (l.second.second - l.first.second)});
+                      p.second + t * (l.second.second - l.first.second)});
         return length(line_t(p, proj));
-
     }
-    std::vector<point_t> cPolygon::all_line_intersections(
-        const line_t &l)
-    {
+    // std::vector<point_t> cPolygon::all_line_intersections(
+    //     const line_t &l)
+    // {
         //     std::vector<point_t> vint;
         //     for (
         //         int edge = 0;
@@ -204,5 +207,5 @@ namespace geo
         //         }
         //     }
         //     return vint;
-    }
+    // }
 }
